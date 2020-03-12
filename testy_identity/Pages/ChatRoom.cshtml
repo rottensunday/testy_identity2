@@ -1,0 +1,67 @@
+﻿@page
+@model testy_identity.ChatRoomModel
+@inject UserManager<User> UserManager
+@{
+    ViewData["Title"] = "ChatRoom";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-2">Message</div>
+    <div class="col-4"><input type="text" id="messageInput" /></div>
+</div>
+<div class="row justify-content-between">
+    <div class="col-6">
+        <input type="button" id="sendButton" value="Send Message" />
+    </div>
+    <div class="col-4">
+        <h4>Connected users:</h4>
+        <ul>
+            @foreach(User user in Model.Users)
+            {
+                <li>@user.UserName</li>
+            }
+        </ul>
+    </div>
+</div>
+
+<ul id="messagesList">
+</ul>
+
+@*<script src="~/lib/microsoft-signalr/signalr.js"></script>
+<script>
+    "use strict";
+
+    var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").configureLogging(signalR.LogLevel.Trace).build();
+
+    //Disable send button until connection is established
+    document.getElementById("sendButton").disabled = true;
+
+    connection.on("ReceiveMessage", function (user1, user2, sender, message) {
+        if ((user1 == "@Model.User1" || user1 == "@Model.User2") && (user2 == "@Model.User1" || user2 == "@Model.User2")) {
+            var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            var encodedMsg = sender + " says " + msg;
+            var li = document.createElement("li");
+            li.textContent = encodedMsg;
+            document.getElementById("messagesList").appendChild(li);
+        }
+    });
+
+    connection.start().then(async function () {
+        document.getElementById("sendButton").disabled = false;
+        const nazwa = await connection.invoke("GetUser");
+        console.log(nazwa);
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+
+    document.getElementById("sendButton").addEventListener("click", function (event) {
+        const user1 = "@Model.User1";
+        const user2 = "@Model.User2";
+        const sender = "@UserManager.GetUserName(User)";
+        const message = document.getElementById("messageInput").value;
+        connection.invoke("SendMessage", user1, user2, sender, message).catch(function (err) {
+            return console.error(err.toString());
+        });
+        event.preventDefault();
+    });
+</script>*@

@@ -11,7 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using testy_identity.Models;
-
+using Microsoft.AspNetCore.Identity;
+using testy_identity.Hubs;
 
 namespace testy_identity
 {
@@ -27,12 +28,16 @@ namespace testy_identity
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<UsersContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DBConnection")));
             services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<UsersContext>();
+            services.AddTransient<EFGroupsRepository>();
+            services.AddTransient<EFUsersRepository>();
+            services.AddTransient<SeedData>();
             services.AddRazorPages();
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,6 +65,7 @@ namespace testy_identity
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapHub<ChatHub>("/chatHub");
             });
         }
     }

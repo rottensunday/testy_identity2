@@ -1,10 +1,59 @@
 ﻿@page
 @model IndexModel
+@inject UserManager<User> UserManager
 @{
     ViewData["Title"] = "Home page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="row justify-content-between">
+            <table class="table col-4">
+                <thead>
+                    <tr>
+                        <th scope="col">Users</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var userGroupView in Model.UserGroups)
+                    {
+                    <tr>
+                        @*<td><a asp-page="/ChatRoom" asp-route-user1="@UserManager.GetUserId(User)" asp-route-user2="@user.Id">@user.UserName</a></td>*@
+                        @if (userGroupView.Group == null)
+                        {
+                            <td>
+                                <a asp-page="/ChatRoom" asp-route-groupId="0" asp-route-user1="@UserManager.GetUserId(User)"
+                                   asp-route-user2="@userGroupView.User.Id">@userGroupView.User.UserName</a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td><a asp-page="/ChatRoom" asp-route-groupId="@userGroupView.Group.Id">@userGroupView.User.UserName</a></td>
+                        }
+
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            <table class="table col-4">
+                <thead>
+                    <tr>
+                        <th scope="col">Cool Groups</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var userGroupView in Model.UserGroups)
+                    {
+                        <tr>
+                            <td><a>@userGroupView.User.UserName</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+
 </div>
